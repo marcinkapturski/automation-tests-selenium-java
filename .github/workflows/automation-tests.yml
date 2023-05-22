@@ -1,7 +1,9 @@
-name: Run Automation Tests
+name: Java CI with Maven and Selenium
 
 on:
   push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -9,11 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '>=16.0.0'
-          
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -21,7 +18,21 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 11
-          distribution: 'adopt'
+
+      - name: Install Chrome
+        run: |
+          CHROME_VERSION="113.0.5672.63"
+          wget https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}-1_amd64.deb
+          sudo dpkg -i google-chrome-stable_${CHROME_VERSION}-1_amd64.deb
+          sudo apt-get -f install -y
+
+      - name: Install ChromeDriver
+        run: |
+          CHROME_DRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION})
+          wget https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/chromedriver
+          sudo chmod +x /usr/local/bin/chromedriver
 
       - name: Cache Maven packages
         uses: actions/cache@v2
@@ -29,23 +40,8 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
 
-      - name: Install Chrome
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable=113.0.5672.63
-
-      - name: Install Chrome Driver
-        run: |
-          curl -o chromedriver_linux64.zip http://chromedriver.storage.googleapis.com/113.0.5672.63/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/chromedriver
-          sudo chmod +x /usr/local/bin/chromedriver
-          echo "CHROME_DRIVER_PATH=/usr/local/bin/chromedriver" >> $GITHUB_ENV
-
       - name: Build with Maven
-        run: mvn clean install -D skipTests
+        run: mvn clean install
 
       - name: Run tests with Selenium
-        run: |
-          echo "webdriver.chrome.driver=$CHROME_DRIVER_PATH" >> $GITHUB_ENV
-          mvn test
+        run: mvn test
