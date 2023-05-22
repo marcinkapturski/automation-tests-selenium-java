@@ -32,19 +32,18 @@ jobs:
       - name: Install Chrome
         run: |
           sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+          sudo apt-get install -y google-chrome-stable=113.0.5672.63
 
       - name: Install Chrome Driver
         run: |
-          LATEST_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)
-          curl -o chromedriver_linux64.zip http://chromedriver.storage.googleapis.com/$LATEST_VERSION/chromedriver_linux64.zip
+          curl -o chromedriver_linux64.zip http://chromedriver.storage.googleapis.com/113.0.5672.63/chromedriver_linux64.zip
           unzip chromedriver_linux64.zip
           sudo mv chromedriver /usr/local/bin/chromedriver
           sudo chmod +x /usr/local/bin/chromedriver
           echo "CHROME_DRIVER_PATH=/usr/local/bin/chromedriver" >> $GITHUB_ENV
 
       - name: Build with Maven
-        run: mvn clean install -DskipTests
+        run: mvn clean install -D skipTests
 
       - name: Run tests with Selenium
         run: |
