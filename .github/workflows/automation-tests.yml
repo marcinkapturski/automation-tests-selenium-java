@@ -1,4 +1,4 @@
-name: Java CI with Maven and Selenium
+name: Run Automation Tests
 
 on:
   push:
@@ -9,6 +9,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '>=16.0.0'
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -16,6 +21,13 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 11
+          distribution: 'adopt'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
 
       - name: Install Chrome
         run: |
@@ -32,14 +44,10 @@ jobs:
           sudo mv chromedriver /usr/local/bin/chromedriver
           sudo chmod +x /usr/local/bin/chromedriver
 
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-
       - name: Build with Maven
-        run: mvn clean install
+        run: mvn clean install -D skipTests
 
       - name: Run tests with Selenium
-        run: mvn test
+        run: |
+          echo "webdriver.chrome.driver=$CHROME_DRIVER_PATH" >> $GITHUB_ENV
+          mvn test
