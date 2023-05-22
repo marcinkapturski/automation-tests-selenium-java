@@ -2,8 +2,6 @@ name: Java CI with Maven and Selenium
 
 on:
   push:
-    branches:
-      - main
 
 jobs:
   build:
