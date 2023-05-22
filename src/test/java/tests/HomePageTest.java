@@ -17,6 +17,7 @@ public class HomePageTest {
     @Before
     public void setup() {
         String chromeDriverPath = System.getenv("CHROME_DRIVER_PATH");
+        System.out.println(System.getenv("CHROME_DRIVER_PATH"));
         if (chromeDriverPath == null) {
             throw new IllegalArgumentException("CHROME_DRIVER_PATH environment variable is not set");
         }
