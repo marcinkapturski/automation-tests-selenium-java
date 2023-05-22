@@ -16,16 +16,13 @@ public class HomePageTest {
 
     @Before
     public void setup() {
-        // Set up WebDriver for Chrome
-        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+        String chromeDriverPath = System.getenv("CHROME_DRIVER_PATH");
+        if (chromeDriverPath == null) {
+            throw new IllegalArgumentException("CHROME_DRIVER_PATH environment variable is not set");
+        }
+
+        System.setProperty("webdriver.chrome.driver", chromeDriverPath);
         driver = new ChromeDriver();
-
-        // Set up WebDriver for Firefox
-        // System.setProperty("webdriver.gecko.driver", "src/drivers/windows/geckodriver");
-        // driver = new FirefoxDriver();
-
-        // Set up WebDriver for Safari
-        // driver = new SafariDriver();
 
         driver.manage().window().maximize();
         homePage = new HomePage(driver);
