@@ -39,7 +39,7 @@ jobs:
           echo "CHROME_DRIVER_PATH=/usr/local/bin/chromedriver" >> $GITHUB_ENV
 
       - name: Build with Maven
-        run: mvn clean install
+        run: mvn clean install -DskipTests
 
       - name: Run tests with Selenium
         run: |
