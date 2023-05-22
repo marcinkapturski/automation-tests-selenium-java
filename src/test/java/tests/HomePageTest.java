@@ -17,7 +17,7 @@ public class HomePageTest {
     @Before
     public void setup() {
         // Set up WebDriver for Chrome
-        System.setProperty("webdriver.chrome.driver", "src/drivers/windows/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
         driver = new ChromeDriver();
 
         // Set up WebDriver for Firefox
