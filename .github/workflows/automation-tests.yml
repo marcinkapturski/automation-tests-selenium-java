@@ -4,15 +4,11 @@ on:
   push:
 
 jobs:
-  build:
+  build and run tests:
 
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '>=16.0.0'
 
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -46,6 +42,18 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean install -D skipTests
+
+      - name: Display Chrome version
+        run: google-chrome-stable --version
+
+      - name: Display ChromeDriver version
+        run: chromedriver --version
+
+      - name: Set permissions for ChromeDriver
+        run: sudo chmod +x /usr/local/bin/chromedriver
+
+      - name: Set permissions for Chrome
+        run: sudo chmod +x /usr/bin/google-chrome-stable
 
       - name: Run tests with Selenium
         run: |
