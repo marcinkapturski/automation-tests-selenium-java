@@ -36,9 +36,12 @@ jobs:
           wget -N https://chromedriver.storage.googleapis.com/93.0.4577.15/chromedriver_linux64.zip
           unzip chromedriver_linux64.zip
           sudo mv chromedriver /usr/local/bin/
+          echo "CHROME_DRIVER_PATH=/usr/local/bin/chromedriver" >> $GITHUB_ENV
 
       - name: Build with Maven
         run: mvn clean install
 
       - name: Run tests with Selenium
-        run: mvn test
+        run: |
+          echo "webdriver.chrome.driver=$CHROME_DRIVER_PATH" >> $GITHUB_ENV
+          mvn test
